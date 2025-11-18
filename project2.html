@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Converter + Input Guard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6b3e47 0%, #a4556e 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #6b3e47, #a4556e);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .input-section {
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #6b3e47;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #a4556e;
+            outline: none;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #convertBtn {
+            background: linear-gradient(to right, #6b3e47, #a4556e);
+            color: white;
+        }
+        
+        #validateBtn {
+            background: linear-gradient(to right, #a4556e, #e8b4d4);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border-left: 5px solid #a4556e;
+        }
+        
+        .card h3 {
+            color: #6b3e47;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .result-card {
+            background: linear-gradient(to right, #f9f2f5, #f0e1e8);
+        }
+        
+        .validation-card {
+            background: linear-gradient(to right, #f9f2f5, #f0e1e8);
+        }
+        
+        .result-item {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+        }
+        
+        .highlight {
+            color: #a4556e;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .success {
+            color: #388e3c;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .warning {
+            color: #f57c00;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        @media (max-width: 768px) {
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Temperature Converter + Input Guard</h1>
+            <p class="subtitle">Convert between Celsius and Fahrenheit with input validation</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="temperature">Temperature:</label>
+                    <input type="number" id="temperature" placeholder="Enter temperature">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fromUnit">Convert from:</label>
+                    <select id="fromUnit">
+                        <option value="celsius">Celsius (°C)</option>
+                        <option value="fahrenheit">Fahrenheit (°F)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="toUnit">Convert to:</label>
+                    <select id="toUnit">
+                        <option value="fahrenheit">Fahrenheit (°F)</option>
+                        <option value="celsius">Celsius (°C)</option>
+                    </select>
+                </div>
+                
+                <div class="buttons">
+                    <button id="convertBtn">Convert Temperature</button>
+                    <button id="validateBtn">Validate Input</button>
+                </div>
+            </div>
+            
+            <div class="card result-card">
+                <h3>Conversion Result</h3>
+                <div id="conversionResult">Conversion result will appear here...</div>
+            </div>
+            
+            <div class="card validation-card">
+                <h3>Validation Result</h3>
+                <div id="validationResult">Validation result will appear here...</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>JavaScript project covering: console.log, comments, var/let/const, data types, operators</p>
+        </footer>
+    </div>
+
+    <script>
+        // ========== COMMENTS ==========
+        // This project covers basic JavaScript concepts
+        
+        /*
+          Data Types in JavaScript:
+          - String
+          - Number
+          - Boolean
+          - Undefined
+          - Null
+        */
+        
+        // ========== var / let / const ==========
+        // var (can be redefined and updated in the same scope)
+        var appTitle = "Temperature Converter";
+        
+        // let (can be updated but not redefined in the same scope)
+        let temperatureInput = "";
+        let fromUnit = "";
+        let toUnit = "";
+        
+        // const (constant, cannot be updated or redefined)
+        const ABSOLUTE_ZERO_C = -273.15;
+        const ABSOLUTE_ZERO_F = -459.67;
+        
+        // ========== DATA TYPES ==========
+        // String
+        let stringExample = "This is a text string";
+        
+        // Number
+        let numberExample = 42;
+        let decimalExample = 3.14;
+        
+        // Boolean
+        let booleanExample = true;
+        
+        // Undefined
+        let undefinedExample;
+        
+        // Null
+        let nullExample = null;
+        
+        // ========== DOM ELEMENTS ==========
+        const convertBtn = document.getElementById('convertBtn');
+        const validateBtn = document.getElementById('validateBtn');
+        const conversionResult = document.getElementById('conversionResult');
+        const validationResult = document.getElementById('validationResult');
+        
+        // ========== STRING OPERATORS ==========
+        // Concatenation (+)
+        function createResultMessage(value, from, to, result) {
+            // Using + for string concatenation
+            return "Conversion: " + value + " " + from + " = " + result + " " + to;
+        }
+        
+        // Template Literals (`...`)
+        function createResultMessageTemplate(value, from, to, result) {
+            // Using Template Literals for string concatenation
+            return `Conversion: ${value} ${from} = ${result} ${to}`;
+        }
+        
+        // ========== ARITHMETIC OPERATORS ==========
+        function celsiusToFahrenheit(celsius) {
+            // Using arithmetic operators: * and + and /
+            return (celsius * 9/5) + 32;
+        }
+        
+        function fahrenheitToCelsius(fahrenheit) {
+            // Using arithmetic operators: - and * and /
+            return (fahrenheit - 32) * 5/9;
+        }
+        
+        // ========== COMPARISON OPERATORS ==========
+        function validateTemperature(value, unit) {
+            let isValid = true;
+            let message = "";
+            
+            // == Equal to (value only)
+            if (value == "") {
+                isValid = false;
+                message = "Value is empty!";
+            }
+            
+            // === Strict equal to (value and type)
+            else if (value === null) {
+                isValid = false;
+                message = "Value is invalid!";
+            }
+            
+            // > Greater than and < Less than
+            else if (unit === 'celsius' && value < ABSOLUTE_ZERO_C) {
+                isValid = false;
+                message = `Temperature is below absolute zero! (${ABSOLUTE_ZERO_C}°C)`;
+            }
+            else if (unit === 'fahrenheit' && value < ABSOLUTE_ZERO_F) {
+                isValid = false;
+                message = `Temperature is below absolute zero! (${ABSOLUTE_ZERO_F}°F)`;
+            }
+            
+            // >= Greater than or equal to
+            else if (value >= 1000) {
+                isValid = false;
+                message = "Temperature is too high!";
+            }
+            
+            return { isValid, message };
+        }
+        
+        // ========== LOGICAL OPERATORS ==========
+        function isExtremeTemperature(value, unit) {
+            // && AND
+            const isVeryHot = unit === 'celsius' && value > 50 || unit === 'fahrenheit' && value > 122;
+            
+            // || OR
+            const isVeryCold = unit === 'celsius' && value < -20 || unit === 'fahrenheit' && value < -4;
+            
+            // ! NOT
+            const isNotNormal = !(value >= 0 && value <= 30);
+            
+            return { isVeryHot, isVeryCold, isNotNormal };
+        }
+        
+        // ========== EVENT HANDLING ==========
+        convertBtn.addEventListener('click', function() {
+            // Get values from inputs
+            temperatureInput = document.getElementById('temperature').value;
+            fromUnit = document.getElementById('fromUnit').value;
+            toUnit = document.getElementById('toUnit').value;
+            
+            // Using different data types
+            const tempValue = parseFloat(temperatureInput); // Number
+            const fromUnitSymbol = fromUnit === 'celsius' ? '°C' : '°F'; // String
+            const toUnitSymbol = toUnit === 'celsius' ? '°C' : '°F'; // String
+            
+            // Validate input
+            const validation = validateTemperature(tempValue, fromUnit);
+            
+            if (!validation.isValid) {
+                conversionResult.innerHTML = `<div class="error">${validation.message}</div>`;
+                return;
+            }
+            
+            // Perform conversion
+            let convertedValue;
+            if (fromUnit === 'celsius' && toUnit === 'fahrenheit') {
+                convertedValue = celsiusToFahrenheit(tempValue);
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'celsius') {
+                convertedValue = fahrenheitToCelsius(tempValue);
+            } else {
+                convertedValue = tempValue; // Same unit
+            }
+            
+            // Round result to 2 decimal places
+            convertedValue = Math.round(convertedValue * 100) / 100;
+            
+            // Check for extreme temperatures
+            const extremeTemp = isExtremeTemperature(tempValue, fromUnit);
+            
+            // Create result message
+            let resultHTML = `
+                <div class="result-item">
+                    <span class="highlight">${createResultMessageTemplate(tempValue, fromUnitSymbol, toUnitSymbol, convertedValue)}</span>
+                </div>
+            `;
+            
+            // Add warnings for extreme temperatures
+            if (extremeTemp.isVeryHot) {
+                resultHTML += `<div class="result-item warning">Warning: Very high temperature!</div>`;
+            }
+            
+            if (extremeTemp.isVeryCold) {
+                resultHTML += `<div class="result-item warning">Warning: Very low temperature!</div>`;
+            }
+            
+            if (extremeTemp.isNotNormal && !extremeTemp.isVeryHot && !extremeTemp.isVeryCold) {
+                resultHTML += `<div class="result-item">Note: Unusual temperature</div>`;
+            }
+            
+            // Display result
+            conversionResult.innerHTML = resultHTML;
+            
+            // ========== console.log ==========
+            console.log("=== CONVERSION INFO ===");
+            console.log("Input value:", tempValue);
+            console.log("Type of input value:", typeof tempValue);
+            console.log("Convert from:", fromUnit);
+            console.log("Convert to:", toUnit);
+            console.log("Converted value:", convertedValue);
+            console.log("Type of converted value:", typeof convertedValue);
+            console.log("Is very hot?", extremeTemp.isVeryHot);
+            console.log("Is very cold?", extremeTemp.isVeryCold);
+            console.log("Is not normal?", extremeTemp.isNotNormal);
+        });
+        
+        validateBtn.addEventListener('click', function() {
+            // Get values from inputs
+            temperatureInput = document.getElementById('temperature').value;
+            fromUnit = document.getElementById('fromUnit').value;
+            
+            // Using different data types
+            const tempValue = parseFloat(temperatureInput); // Number
+            
+            // Validate input
+            const validation = validateTemperature(tempValue, fromUnit);
+            
+            // Create validation message
+            let validationHTML = "";
+            
+            if (validation.isValid) {
+                validationHTML = `
+                    <div class="result-item success">Input is valid!</div>
+                    <div class="result-item">Value: <span class="highlight">${tempValue}</span></div>
+                    <div class="result-item">Value type: <span class="highlight">${typeof tempValue}</span></div>
+                    <div class="result-item">Unit: <span class="highlight">${fromUnit === 'celsius' ? 'Celsius' : 'Fahrenheit'}</span></div>
+                `;
+            } else {
+                validationHTML = `
+                    <div class="result-item error">${validation.message}</div>
+                    <div class="result-item">Input value: <span class="highlight">${temperatureInput}</span></div>
+                    <div class="result-item">Input value type: <span class="highlight">${typeof temperatureInput}</span></div>
+                `;
+            }
+            
+            // Additional validation using comparison and logical operators
+            const extremeTemp = isExtremeTemperature(tempValue, fromUnit);
+            
+            validationHTML += `
+                <div class="result-item">Is very hot: <span class="highlight">${extremeTemp.isVeryHot ? 'Yes' : 'No'}</span></div>
+                <div class="result-item">Is very cold: <span class="highlight">${extremeTemp.isVeryCold ? 'Yes' : 'No'}</span></div>
+                <div class="result-item">Is unusual temperature: <span class="highlight">${extremeTemp.isNotNormal ? 'Yes' : 'No'}</span></div>
+            `;
+            
+            // Display validation result
+            validationResult.innerHTML = validationHTML;
+            
+            // ========== console.log ==========
+            console.log("=== VALIDATION RESULT ===");
+            console.log("Is input valid?", validation.isValid);
+            if (!validation.isValid) {
+                console.log("Error message:", validation.message);
+            }
+            console.log("Input value:", temperatureInput);
+            console.log("Type of input value:", typeof temperatureInput);
+            console.log("Numeric value:", tempValue);
+            console.log("Type of numeric value:", typeof tempValue);
+            console.log("Unit:", fromUnit);
+            console.log("Is very hot?", extremeTemp.isVeryHot);
+            console.log("Is very cold?", extremeTemp.isVeryCold);
+            console.log("Is unusual temperature?", extremeTemp.isNotNormal);
+        });
+        
+        // Welcome message when page loads
+        console.log("Temperature Converter project loaded successfully!");
+        console.log("Application name:", appTitle);
+        console.log("Absolute zero in Celsius:", ABSOLUTE_ZERO_C);
+        console.log("Absolute zero in Fahrenheit:", ABSOLUTE_ZERO_F);
+    </script>
+</body>
+</html>
