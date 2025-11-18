@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Converter + Input Guard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -13,10 +14,11 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6b3e47 0%, #a4556e 100%);
+            background: linear-gradient(135deg, #800020 0%, #b30036 100%);
             color: #333;
             line-height: 1.6;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,8 +26,8 @@
         }
         
         .container {
-            max-width: 600px;
-            width: 100%;
+            width: 95%;
+            max-width: 1200px;
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -33,79 +35,103 @@
         }
         
         header {
-            background: linear-gradient(to right, #6b3e47, #a4556e);
+            background: linear-gradient(to right, #800020, #b30036);
             color: white;
             text-align: center;
-            padding: 25px 20px;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .header-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
         }
         
         h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
         }
         
         .subtitle {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             opacity: 0.9;
         }
         
         .content {
-            padding: 25px;
+            padding: 35px;
         }
         
         .input-section {
-            margin-bottom: 25px;
+            margin-bottom: 40px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            position: relative;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-weight: 600;
-            color: #6b3e47;
+            color: #800020;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b30036;
         }
         
         input, select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 16px 20px 16px 45px;
             border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 18px;
             transition: border-color 0.3s;
         }
         
         input:focus, select:focus {
-            border-color: #a4556e;
+            border-color: #b30036;
             outline: none;
         }
         
         .buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 25px;
+            gap: 20px;
+            margin-top: 30px;
         }
         
         button {
             flex: 1;
-            padding: 14px;
+            padding: 18px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
         }
         
         #convertBtn {
-            background: linear-gradient(to right, #6b3e47, #a4556e);
+            background: linear-gradient(to right, #800020, #b30036);
             color: white;
         }
         
         #validateBtn {
-            background: linear-gradient(to right, #a4556e, #e8b4d4);
+            background: linear-gradient(to right, #b30036, #e8b4d4);
             color: white;
         }
         
@@ -117,36 +143,49 @@
         .card {
             background: white;
             border-radius: 10px;
-            padding: 20px;
+            padding: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            border-left: 5px solid #a4556e;
+            margin-bottom: 30px;
+            border-left: 5px solid #b30036;
+            position: relative;
+        }
+        
+        .card-icon {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: #b30036;
+            font-size: 2rem;
         }
         
         .card h3 {
-            color: #6b3e47;
-            margin-bottom: 15px;
+            color: #800020;
+            margin-bottom: 25px;
             border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+            padding-bottom: 15px;
         }
         
-        .result-card {
-            background: linear-gradient(to right, #f9f2f5, #f0e1e8);
-        }
-        
-        .validation-card {
+        .result-card, .validation-card {
             background: linear-gradient(to right, #f9f2f5, #f0e1e8);
         }
         
         .result-item {
-            margin-bottom: 10px;
-            padding: 8px 12px;
+            margin-bottom: 20px;
+            padding: 14px 20px;
             background: rgba(255, 255, 255, 0.7);
-            border-radius: 6px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-item i {
+            margin-right: 15px;
+            width: 25px;
+            text-align: center;
         }
         
         .highlight {
-            color: #a4556e;
+            color: #b30036;
             font-weight: bold;
         }
         
@@ -168,12 +207,37 @@
             margin-top: 5px;
         }
         
+        .temperature-scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+        
+        .scale-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .scale-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #800020;
+        }
+        
+        .scale-label {
+            font-size: 1rem;
+            color: #777;
+        }
+        
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             background-color: #f8f9fa;
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             border-top: 1px solid #e9ecef;
         }
         
@@ -181,12 +245,18 @@
             .buttons {
                 flex-direction: column;
             }
+            
+            .temperature-scale {
+                flex-direction: column;
+                gap: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <i class="fas fa-thermometer-half header-icon"></i>
             <h1>Temperature Converter + Input Guard</h1>
             <p class="subtitle">Convert between Celsius and Fahrenheit with input validation</p>
         </header>
@@ -194,45 +264,76 @@
         <div class="content">
             <div class="input-section">
                 <div class="form-group">
-                    <label for="temperature">Temperature:</label>
-                    <input type="number" id="temperature" placeholder="Enter temperature">
+                    <label for="temperature"><i class="fas fa-temperature-high"></i>Temperature:</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                        <input type="number" id="temperature" placeholder="Enter temperature">
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="fromUnit">Convert from:</label>
-                    <select id="fromUnit">
-                        <option value="celsius">Celsius (°C)</option>
-                        <option value="fahrenheit">Fahrenheit (°F)</option>
-                    </select>
+                    <label for="fromUnit"><i class="fas fa-arrow-right"></i>Convert from:</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-compress-alt"></i>
+                        <select id="fromUnit">
+                            <option value="celsius">Celsius (°C)</option>
+                            <option value="fahrenheit">Fahrenheit (°F)</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="toUnit">Convert to:</label>
-                    <select id="toUnit">
-                        <option value="fahrenheit">Fahrenheit (°F)</option>
-                        <option value="celsius">Celsius (°C)</option>
-                    </select>
+                    <label for="toUnit"><i class="fas fa-arrow-left"></i>Convert to:</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-expand-alt"></i>
+                        <select id="toUnit">
+                            <option value="fahrenheit">Fahrenheit (°F)</option>
+                            <option value="celsius">Celsius (°C)</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="buttons">
-                    <button id="convertBtn">Convert Temperature</button>
-                    <button id="validateBtn">Validate Input</button>
+                    <button id="convertBtn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Convert Temperature
+                    </button>
+                    <button id="validateBtn">
+                        <i class="fas fa-check-circle"></i>
+                        Validate Input
+                    </button>
                 </div>
             </div>
             
             <div class="card result-card">
+                <i class="fas fa-chart-line card-icon"></i>
                 <h3>Conversion Result</h3>
                 <div id="conversionResult">Conversion result will appear here...</div>
+                <div class="temperature-scale">
+                    <div class="scale-item">
+                        <div class="scale-value">0°C</div>
+                        <div class="scale-label">Water Freezes</div>
+                    </div>
+                    <div class="scale-item">
+                        <div class="scale-value">22°C</div>
+                        <div class="scale-label">Room Temp</div>
+                    </div>
+                    <div class="scale-item">
+                        <div class="scale-value">100°C</div>
+                        <div class="scale-label">Water Boils</div>
+                    </div>
+                </div>
             </div>
             
             <div class="card validation-card">
+                <i class="fas fa-shield-alt card-icon"></i>
                 <h3>Validation Result</h3>
                 <div id="validationResult">Validation result will appear here...</div>
             </div>
         </div>
         
         <footer>
-            <p>JavaScript project covering: console.log, comments, var/let/const, data types, operators</p>
+            <p><i class="fas fa-code"></i> JavaScript project covering: console.log, comments, var/let/const, data types, operators</p>
         </footer>
     </div>
 
@@ -345,16 +446,30 @@
             return { isValid, message };
         }
         
-        // ========== LOGICAL OPERATORS ==========
+        // ========== LOGICAL OPERATORS (FIXED) ==========
         function isExtremeTemperature(value, unit) {
-            // && AND
-            const isVeryHot = unit === 'celsius' && value > 50 || unit === 'fahrenheit' && value > 122;
+            // && AND and || OR with proper parentheses
+            let isVeryHot = false;
+            if (unit === 'celsius' && value > 50) {
+                isVeryHot = true;
+            } else if (unit === 'fahrenheit' && value > 122) {
+                isVeryHot = true;
+            }
             
-            // || OR
-            const isVeryCold = unit === 'celsius' && value < -20 || unit === 'fahrenheit' && value < -4;
+            let isVeryCold = false;
+            if (unit === 'celsius' && value < -20) {
+                isVeryCold = true;
+            } else if (unit === 'fahrenheit' && value < -4) {
+                isVeryCold = true;
+            }
             
-            // ! NOT
-            const isNotNormal = !(value >= 0 && value <= 30);
+            // ! NOT - Fixed to consider unit type
+            let isNotNormal = false;
+            if (unit === 'celsius') {
+                isNotNormal = !(value >= 0 && value <= 30);
+            } else { // fahrenheit
+                isNotNormal = !(value >= 32 && value <= 86);
+            }
             
             return { isVeryHot, isVeryCold, isNotNormal };
         }
@@ -375,7 +490,7 @@
             const validation = validateTemperature(tempValue, fromUnit);
             
             if (!validation.isValid) {
-                conversionResult.innerHTML = `<div class="error">${validation.message}</div>`;
+                conversionResult.innerHTML = `<div class="result-item"><i class="fas fa-exclamation-triangle"></i><div class="error">${validation.message}</div></div>`;
                 return;
             }
             
@@ -398,21 +513,22 @@
             // Create result message
             let resultHTML = `
                 <div class="result-item">
+                    <i class="fas fa-calculator"></i>
                     <span class="highlight">${createResultMessageTemplate(tempValue, fromUnitSymbol, toUnitSymbol, convertedValue)}</span>
                 </div>
             `;
             
             // Add warnings for extreme temperatures
             if (extremeTemp.isVeryHot) {
-                resultHTML += `<div class="result-item warning">Warning: Very high temperature!</div>`;
+                resultHTML += `<div class="result-item warning"><i class="fas fa-fire"></i>Warning: Very high temperature!</div>`;
             }
             
             if (extremeTemp.isVeryCold) {
-                resultHTML += `<div class="result-item warning">Warning: Very low temperature!</div>`;
+                resultHTML += `<div class="result-item warning"><i class="fas fa-snowflake"></i>Warning: Very low temperature!</div>`;
             }
             
             if (extremeTemp.isNotNormal && !extremeTemp.isVeryHot && !extremeTemp.isVeryCold) {
-                resultHTML += `<div class="result-item">Note: Unusual temperature</div>`;
+                resultHTML += `<div class="result-item"><i class="fas fa-exclamation-circle"></i>Note: Unusual temperature</div>`;
             }
             
             // Display result
@@ -447,16 +563,16 @@
             
             if (validation.isValid) {
                 validationHTML = `
-                    <div class="result-item success">Input is valid!</div>
-                    <div class="result-item">Value: <span class="highlight">${tempValue}</span></div>
-                    <div class="result-item">Value type: <span class="highlight">${typeof tempValue}</span></div>
-                    <div class="result-item">Unit: <span class="highlight">${fromUnit === 'celsius' ? 'Celsius' : 'Fahrenheit'}</span></div>
+                    <div class="result-item success"><i class="fas fa-check-circle"></i>Input is valid!</div>
+                    <div class="result-item"><i class="fas fa-hashtag"></i>Value: <span class="highlight">${tempValue}</span></div>
+                    <div class="result-item"><i class="fas fa-code"></i>Value type: <span class="highlight">${typeof tempValue}</span></div>
+                    <div class="result-item"><i class="fas fa-ruler"></i>Unit: <span class="highlight">${fromUnit === 'celsius' ? 'Celsius' : 'Fahrenheit'}</span></div>
                 `;
             } else {
                 validationHTML = `
-                    <div class="result-item error">${validation.message}</div>
-                    <div class="result-item">Input value: <span class="highlight">${temperatureInput}</span></div>
-                    <div class="result-item">Input value type: <span class="highlight">${typeof temperatureInput}</span></div>
+                    <div class="result-item error"><i class="fas fa-exclamation-triangle"></i>${validation.message}</div>
+                    <div class="result-item"><i class="fas fa-hashtag"></i>Input value: <span class="highlight">${temperatureInput}</span></div>
+                    <div class="result-item"><i class="fas fa-code"></i>Input value type: <span class="highlight">${typeof temperatureInput}</span></div>
                 `;
             }
             
@@ -464,9 +580,9 @@
             const extremeTemp = isExtremeTemperature(tempValue, fromUnit);
             
             validationHTML += `
-                <div class="result-item">Is very hot: <span class="highlight">${extremeTemp.isVeryHot ? 'Yes' : 'No'}</span></div>
-                <div class="result-item">Is very cold: <span class="highlight">${extremeTemp.isVeryCold ? 'Yes' : 'No'}</span></div>
-                <div class="result-item">Is unusual temperature: <span class="highlight">${extremeTemp.isNotNormal ? 'Yes' : 'No'}</span></div>
+                <div class="result-item"><i class="fas fa-fire"></i>Is very hot: <span class="highlight">${extremeTemp.isVeryHot ? 'Yes' : 'No'}</span></div>
+                <div class="result-item"><i class="fas fa-snowflake"></i>Is very cold: <span class="highlight">${extremeTemp.isVeryCold ? 'Yes' : 'No'}</span></div>
+                <div class="result-item"><i class="fas fa-exclamation-circle"></i>Is unusual temperature: <span class="highlight">${extremeTemp.isNotNormal ? 'Yes' : 'No'}</span></div>
             `;
             
             // Display validation result
